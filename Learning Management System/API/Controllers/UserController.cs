@@ -1,10 +1,9 @@
-﻿using Learning_Management_System.Application.DTOs.CategoryDTO;
-using Learning_Management_System.Application.DTOs.UserDTO;
+﻿using Learning_Management_System.Application.DTOs.UserDTO;
 using Learning_Management_System.Application.Iservices;
-using Learning_Management_System.Application.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Security.Claims;
 
 namespace Learning_Management_System.API.Controllers
 {
@@ -18,10 +17,16 @@ namespace Learning_Management_System.API.Controllers
             _userService = userService;
         }
 
-        [HttpPut("Profile/{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(UpdateUserProfileDto dto, long id)
-            => Ok(await _userService.UpdateAsync(id, dto));
+        [HttpPut("Profile")]
+
+        public async Task<IActionResult> Update(UpdateUserProfileDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+            await _userService.UpdateAsync(long.Parse(userId), dto);
+            return NoContent();
+        }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]

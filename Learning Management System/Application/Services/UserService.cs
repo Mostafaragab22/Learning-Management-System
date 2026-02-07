@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Learning_Management_System.Application.DTOs.SubmissionDTO;
 using Learning_Management_System.Application.DTOs.UserDTO;
 using Learning_Management_System.Application.Iservices;
 using Learning_Management_System.Core.Entities;
 using Learning_Management_System.Core.Exceptions;
 using Learning_Management_System.Core.Interfaces;
 using Learning_Management_System.Infrastructure.Caching;
+using Microsoft.AspNetCore.Identity;
 
 namespace Learning_Management_System.Application.Services
 {
@@ -14,27 +14,30 @@ namespace Learning_Management_System.Application.Services
         IMapper _mapper;
         IUserRepository _repository;
         ICacheService _cacheService;
+        UserManager<User> _userManager;
 
         private const string CacheKey_All = "users";
         private const string CacheKey_Prefix = "user_";
 
-        public UserService(IMapper mapper, IUserRepository repository, ICacheService cacheService)
+        public UserService(IMapper mapper, IUserRepository repository, ICacheService cacheService, UserManager<User> userManager)
         {
             _mapper = mapper;
             _repository = repository;
             _cacheService = cacheService;
+            _userManager = userManager;
         }
 
-        public async Task<UserResponseDto> UpdateAsync(long id, UpdateUserProfileDto dto)
+        public async Task<UserResponseDto> UpdateAsync(long userId, UpdateUserProfileDto dto)
         {
+          
 
-            var user = await _repository.GetById(id) ??
+            var user = await _repository.GetByIdAsync(userId) ??
                 throw new NotFoundException("user not found");
-            _mapper.Map<User>(dto);
+            _mapper.Map(dto, user);
             _repository.Update(user);
             await _repository.Save();
             await _cacheService.RemoveAsync(CacheKey_All);
-            await _cacheService.RemoveAsync(CacheKey_Prefix + id);
+            await _cacheService.RemoveAsync(CacheKey_Prefix + userId);
             return _mapper.Map<UserResponseDto>(user);
 
         }
@@ -43,7 +46,7 @@ namespace Learning_Management_System.Application.Services
 
             var user = await _repository.GetById(id) ??
                 throw new NotFoundException("user not found");
-            _mapper.Map<User>(dto);
+            _mapper.Map(dto, user);
             _repository.Update(user);
             await _repository.Save();
             await _cacheService.RemoveAsync(CacheKey_All);

@@ -23,6 +23,12 @@ namespace Learning_Management_System.Application.Mapping
 
             CreateMap<User, UserResponseDto>();
 
+            CreateMap<UpdateUserProfileDto, User>()
+              .ForMember(dest => dest.Id, opt => opt.Ignore());
+
+            CreateMap<AdminUserDto, User>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
+
 
 
 

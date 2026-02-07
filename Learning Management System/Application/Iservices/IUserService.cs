@@ -6,7 +6,7 @@ namespace Learning_Management_System.Application.Iservices
     {
         Task<UserResponseDto> GetUserById(long id);
         Task<UserResponseDto> GetUserByName(string Name);
-        Task<UserResponseDto> UpdateAsync(long id,UpdateUserProfileDto dto);
+        Task<UserResponseDto> UpdateAsync(long userId, UpdateUserProfileDto dto);
         Task<UserResponseDto> UpdateAdmiAsync(long id,AdminUserDto dto);
 
     }

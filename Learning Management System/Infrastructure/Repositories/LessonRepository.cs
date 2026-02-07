@@ -30,13 +30,11 @@ namespace Learning_Management_System.Infrastructure.Repositories
         public async Task <Lessons> GetById(long id)
         {
             return context.lessons.Include(x => x.Course )
-                .Include(x => x.CourseName )
                 .FirstOrDefault(x => x.Id == id);
         }
         public async Task<Lessons> GetByTitle(string Name)
         {
             return context.lessons.Include(x => x.Course)
-                .Include(x => x.CourseName)
                 .FirstOrDefault(x => x.Title == Name);
         }
         public async Task<IEnumerable<Lessons>> Getlessons()

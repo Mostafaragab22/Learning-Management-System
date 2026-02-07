@@ -27,6 +27,10 @@ namespace Learning_Management_System.Infrastructure.Repositories
         {
             return context.Users.FirstOrDefault(x => x.Id == id);
         }
+        public  async Task <User?> GetByIdAsync(long id)
+        {
+            return await context.Users.FindAsync(id);
+        }
         public  async Task <User> GetByName(string Name)
         {
             return context.Users.FirstOrDefault(x => x.FullName == Name);

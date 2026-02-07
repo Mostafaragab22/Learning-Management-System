@@ -36,11 +36,11 @@ namespace Learning_Management_System.API.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetById/{id}")]
         public async Task<IActionResult> GetById(long id)
            => Ok(await _service.GetByIdAsync(id));
 
-        [HttpGet("{Name}")]
+        [HttpGet("GetByName/{Name}")]
         public async Task<IActionResult> GetByName(string Name)
          => Ok(await _service.GetByNameAsync(Name));
 
