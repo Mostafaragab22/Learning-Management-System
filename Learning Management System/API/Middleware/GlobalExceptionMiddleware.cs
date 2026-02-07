@@ -61,7 +61,9 @@ public class GlobalExceptionMiddleware
                 statusCode = HttpStatusCode.InternalServerError; // 500
                 message = "An unexpected error occurred.";
                 errors = new[] { ex.Message };
+                errors = new[] { ex.InnerException?.Message ?? ex.Message };
                 break;
+                
         }
 
         context.Response.ContentType = "application/json";

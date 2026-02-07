@@ -35,7 +35,7 @@ namespace Learning_Management_System.Application.Services
             {
                 userClaims.Add(new Claim(ClaimTypes.Role, roleName));
             }
-            var signInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"]));
+            var signInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SecretKey"]));
             SigningCredentials signingCred = new SigningCredentials(signInKey, SecurityAlgorithms.HmacSha256);
             JwtSecurityToken MyToken = new JwtSecurityToken
                 (

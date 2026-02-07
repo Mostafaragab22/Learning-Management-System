@@ -3,7 +3,7 @@
     public class UpdateCourseDto
     {
         
-        public string CourseName { get; set; }
+        public string? CourseName { get; set; }
         public string? CourseDescription { get; set; }
         public int? InstructorId { get; set; }
         public string? InstructorName { get; set; }

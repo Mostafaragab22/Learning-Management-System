@@ -1,16 +1,15 @@
-
-using Learning_Management_System.Infrastructure.Persistence;
+ï»¿
+using Learning_Management_System.API.Extensions;
 using Learning_Management_System.Core.Entities;
-
+using Learning_Management_System.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
+using System.Text;
 using System.Text.Json.Serialization;
-
-using Learning_Management_System.API.Extensions;
 
 namespace Learning_Management_System
 {
@@ -44,17 +43,51 @@ namespace Learning_Management_System
              .AddDefaultTokenProviders();
 
 
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
+
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateIssuer = true,
+                    ValidIssuer = builder.Configuration["JWT:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["JWT:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"])),
+
+                };
+            });
+
+
+            builder.Services.AddAutoMapperProfiles();
+            builder.Services.AddApplicationServices();
+            builder.Services.AddInfrastructure();
+
+            builder.Services.AddCaching(builder.Configuration);
+            builder.Services.AddRateLimiting(builder.Configuration);
+
+
             #region Swagger Setting
             builder.Services.AddSwaggerGen(swagger =>
             {
-                //This is to generate the Default UI of Swagger Documentation    
+                //ThisÂ isÂ toÂ generateÂ theÂ DefaultÂ UIÂ ofÂ SwaggerÂ DocumentationÂ Â Â Â 
                 swagger.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "ASP.NET 9 Web API",
+                    Title = "ASP.NETÂ 9Â WebÂ API",
                     Description = " Learning Management System Project"
                 });
-                // To Enable authorization using Swagger (JWT)    
+                //Â ToÂ EnableÂ authorizationÂ usingÂ SwaggerÂ (JWT)Â Â Â Â 
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
                     Name = "Authorization",
@@ -62,7 +95,7 @@ namespace Learning_Management_System
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+                    Description = "EnterÂ 'Bearer'Â [space]Â andÂ thenÂ yourÂ validÂ tokenÂ inÂ theÂ textÂ inputÂ below.\r\n\r\nExample:Â \"BearerÂ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
                 });
                 swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
@@ -82,25 +115,20 @@ namespace Learning_Management_System
             #endregion
 
 
-            builder.Services.AddAutoMapperProfiles();
-            builder.Services.AddApplicationServices();
-            builder.Services.AddInfrastructure();
-            builder.Services.AddIdentityServices(builder.Configuration);
-            builder.Services.AddCaching(builder.Configuration);
-            builder.Services.AddRateLimiting(builder.Configuration);
-           
            
            
             var app = builder.Build();
             
          
-            app.UseGlobalException();
+           
             if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
                 
             }
+            app.UseGlobalException();
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRateLimiter();

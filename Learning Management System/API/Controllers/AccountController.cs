@@ -54,7 +54,7 @@ namespace Learning_Management_System.API.Controllers
             return NoContent();
         }
 
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Roles = "Admin")]
 
         [HttpGet("test")]
         public IActionResult Test() => Ok("Admin works");
