@@ -36,9 +36,10 @@ namespace Learning_Management_System.Application.Services
         {
             var user = _mapper.Map<User>(registerDto);
             var result = await _userManager.CreateAsync(user,registerDto.Password);
-            await _userManager.AddToRoleAsync(user,user.Role.ToString());
             if (!result.Succeeded)
                 throw new BadRequestException(result.Errors.Select(e => e.Description));
+            await _userManager.AddToRoleAsync(user,Role.Student);
+           
             return await _jwtService.GenerateTokenAsync(user);
                   
         }

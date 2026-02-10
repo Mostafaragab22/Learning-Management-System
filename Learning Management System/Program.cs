@@ -15,7 +15,7 @@ namespace Learning_Management_System
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddEndpointsApiExplorer();
@@ -41,6 +41,7 @@ namespace Learning_Management_System
             builder.Services.AddIdentity<User, Role>()
             .AddEntityFrameworkStores<App_Context>()
              .AddDefaultTokenProviders();
+
 
 
             builder.Services.AddAuthentication(options =>
@@ -135,7 +136,11 @@ namespace Learning_Management_System
 
             app.MapControllers();
 
-
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+                await IdentityDataSeeder.SeedRolesAsync(roleManager);
+            }
             app.Run();
         }
     }

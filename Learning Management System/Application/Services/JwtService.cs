@@ -52,7 +52,6 @@ namespace Learning_Management_System.Application.Services
                 UserId = user.Id,
                 Email = user.Email,
                 FullName = user.FullName,
-                Role = user.Role,
                 Token = new JwtSecurityTokenHandler().WriteToken(MyToken),
                 ExpireAt = MyToken.ValidTo,
 

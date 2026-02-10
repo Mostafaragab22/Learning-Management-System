@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Learning_Management_System.Core.Entities;
-using Learning_Management_System.Core.Enums;
 
 namespace Learning_Management_System.Infrastructure.Persistence
 {
@@ -65,6 +64,9 @@ namespace Learning_Management_System.Infrastructure.Persistence
                 .WithMany(c => c.questions)
                 .HasForeignKey(ca => ca.QuizId)
                 .OnDelete (DeleteBehavior.Restrict);
+
+           
+
 
 
         }
