@@ -9,6 +9,7 @@
         public string Email { get; set; }
 
         public string Token { get; set; }
+        public List<string> Role {  get; set; } = new List<string>();
 
         public DateTime ExpireAt { get; set; } 
     }
